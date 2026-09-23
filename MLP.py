@@ -1,3 +1,5 @@
+from typing import List
+
 from torch import Tensor, nn, tensor
 import torch
 from torch.optim import Adam
@@ -74,3 +76,15 @@ class MLP(nn.Module):
             loss.backward()
 
             self.optim.step()
+
+    def predict_position_over_interval_of_time(self, start_t: int, stop_t: int) -> dict:
+
+        self.model.eval()
+        self.positions_at_each_time = {}
+        with torch.no_grad():
+            for i in range(start_t, stop_t):
+                self.positions_at_each_time[str(i)] = self.feed_forward(
+                    torch.tensor([i]).float()
+                )
+
+        return self.positions_at_each_time
