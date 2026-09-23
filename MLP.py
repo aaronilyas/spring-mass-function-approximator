@@ -40,16 +40,15 @@ class MLP(nn.Module):
         inital_condition_position: torch.Tensor,
         inital_condition_velocity: torch.Tensor,
     ) -> None:
-        t_0 = torch.tensor([0])
+        t_0 = torch.tensor([0]).float()
+        t_0.requires_grad_(True)
         for i in range(epochs):
             independent_variable = torch.tensor([i]).float()
             independent_variable.requires_grad_(True)
 
-            x = self.feed_forward(independent_variable)
+            predicted_initial_position = self.feed_forward(t_0).float()
 
-            inital_velocity = self.derivative(
-                t_0, self.feed_forward(torch.tensor([t_0]))
-            )
+            x = self.feed_forward(independent_variable)
 
             dx_dt = self.derivative(
                 independent_variable, self.feed_forward(independent_variable)
@@ -61,8 +60,10 @@ class MLP(nn.Module):
             )
 
             residual_initial_position = (
-                self.feed_forward(torch.tensor([0])) - inital_condition_position
+                predicted_initial_position - inital_condition_position
             )
+
+            inital_velocity = self.derivative(t_0, predicted_initial_position)
 
             residual_velocity = inital_velocity - inital_condition_velocity
 
