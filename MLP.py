@@ -1,6 +1,6 @@
 from typing import List
 
-from torch import Tensor, nn, tensor
+from torch import Tensor, nn, ones_like, tensor
 import torch
 from torch.optim import Adam
 
@@ -18,19 +18,24 @@ class MLP(nn.Module):
             nn.Tanh(),
             nn.Linear(24, 1),
         )
-        self.optim = torch.optim.Adam(self.parameters(), lr=0.01)
+        self.optim = torch.optim.Adam(self.parameters(), lr=0.002)
 
     def feed_forward(self, t: Tensor) -> Tensor:
         x = self.model(t)
         return x
 
     def derivative(self, t: Tensor, x: Tensor) -> Tensor:
-        return torch.autograd.grad(inputs=t, outputs=x, create_graph=True)[0]
+        return torch.autograd.grad(
+            inputs=t, outputs=x, grad_outputs=torch.ones_like(x), create_graph=True
+        )[0]
 
     def second_derivative(self, t: Tensor, x: Tensor) -> Tensor:
         first_derivative = self.derivative(t, x)
         return torch.autograd.grad(
-            outputs=first_derivative, inputs=t, create_graph=True
+            outputs=first_derivative,
+            inputs=t,
+            grad_outputs=torch.ones_like(x),
+            create_graph=True,
         )[0]
 
     def train_network(
@@ -45,16 +50,14 @@ class MLP(nn.Module):
         t_0 = torch.tensor([0]).float()
         t_0.requires_grad_(True)
         for i in range(epochs):
-            independent_variable = torch.tensor([i]).float()
+            independent_variable = torch.linspace(0, 10, 100).reshape(-1, 1)
             independent_variable.requires_grad_(True)
 
             predicted_initial_position = self.feed_forward(t_0).float()
 
             x = self.feed_forward(independent_variable)
 
-            dx_dt = self.derivative(
-                independent_variable, self.feed_forward(independent_variable)
-            )
+            dx_dt = self.derivative(independent_variable, x)
             d2x_dt2 = self.derivative(independent_variable, dx_dt)
 
             residual_ode = (
@@ -69,9 +72,13 @@ class MLP(nn.Module):
 
             residual_velocity = inital_velocity - inital_condition_velocity
 
-            loss = residual_ode**2 + residual_initial_position**2 + residual_velocity**2
+            loss = (
+                torch.mean(residual_ode**2)
+                + torch.mean(residual_initial_position**2)
+                + torch.mean(residual_velocity**2)
+            )
 
-            self.model.zero_grad()
+            self.optim.zero_grad()
 
             loss.backward()
 
