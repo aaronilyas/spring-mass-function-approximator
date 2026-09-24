@@ -4,6 +4,12 @@ import matplotlib.pyplot as plt
 
 
 def collect_info_from_user_to_train_model(model: MLP) -> None:
+    """
+    This method collects all the necessary information from the user and then passes that into our train network function.
+
+    @author Aaron Ilyas
+    """
+
     epochs = int(input("Enter the number of training epochs: "))
     spring_constant = float(input("Enter the spring constant: "))
     mass = float(input("Enter the mass: "))
