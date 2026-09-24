@@ -22,8 +22,8 @@ def collect_info_from_user_to_train_model(model: MLP) -> None:
         spring_constant=spring_constant,
         mass=mass,
         damping_coefficient=damping_coefficient,
-        inital_condition_position=torch.tensor(initial_position).float(),
-        inital_condition_velocity=torch.tensor(initial_velocity).float(),
+        actual_inital_condition_position=torch.tensor(initial_position).float(),
+        actual_inital_condition_velocity=torch.tensor(initial_velocity).float(),
     )
 
 
