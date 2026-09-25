@@ -1,4 +1,4 @@
-# Spring Mass Function Approximator
+# Physics-Informed Neural Network for a Damped Harmonic Oscillator
 
 This project uses a neural network to approximate the position of a mass attached to a spring over a given interval of time.
 
