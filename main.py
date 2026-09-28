@@ -1,9 +1,13 @@
+from sympy import plot
+
 from MLP import MLP
 import torch
 import matplotlib.pyplot as plt
 
+import compute_algebraic_solution
 
-def collect_info_from_user_to_train_model(model: MLP) -> None:
+
+def collect_info_from_user() -> tuple:
     """
     This method collects all the necessary information from the user and then passes that into our train network function.
 
@@ -17,31 +21,37 @@ def collect_info_from_user_to_train_model(model: MLP) -> None:
     initial_position = float(input("Enter the initial position: "))
     initial_velocity = float(input("Enter the initial velocity: "))
 
+    return epochs,spring_constant, mass, damping_coefficient, initial_position, initial_velocity
+
+def main():
+    model = MLP()
+    epochs, spring_constant, mass, damping_coefficient, initial_position, initial_velocity = collect_info_from_user()
     model.train_network(
         epochs=epochs,
         spring_constant=spring_constant,
         mass=mass,
         damping_coefficient=damping_coefficient,
-        actual_inital_condition_position=torch.tensor(initial_position).float(),
-        actual_inital_condition_velocity=torch.tensor(initial_velocity).float(),
+        actual_initial_condition_position=torch.tensor(initial_position).float(),
+        actual_initial_condition_velocity=torch.tensor(initial_velocity).float(),
     )
-
-
-def main():
-    model = MLP()
-    collect_info_from_user_to_train_model(model)
 
     starting_time = input("Enter: the time you wish the graph to start at ")
     ending_time = input("Enter: the time you wish the graph to end at ")
     position_at_various_time_values = model.predict_position_over_interval_of_time(
         int(starting_time), int(ending_time)
     )
+    
+    symbolic_solution = compute_algebraic_solution.compute_solution_to_second_order_ode_from_spring_mass_system(spring_constant,damping_coefficient,mass,initial_position,initial_velocity)
 
     keys = list(position_at_various_time_values.keys())
     values = list(position_at_various_time_values.values())
 
     plt.scatter(keys, values)
     plt.show()
+
+    #plot(symbolic_solution, starting_time, ending_time)
+    print(symbolic_solution)
+
 
 
 if __name__ == "__main__":
