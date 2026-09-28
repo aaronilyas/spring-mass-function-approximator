@@ -102,6 +102,11 @@ It also contains the methods used to calculate the first and second derivatives 
 
 This file is responsible for collecting the required values from the user, training the neural network and displaying the resulting predicted positions using Matplotlib.
 
+### `compute_algebraic_solution.py`
+
+This file includes a function that solves the ODE given the coefficients for the spring-mass system, along with the initial position and velocity, and returns a symbolic expression.
+This is done via SymPy
+
 ### `requirements.txt`
 
 This file contains the Python packages and versions used by the project.
@@ -169,11 +174,13 @@ After training has finished, the program will ask for the starting and ending ti
 
 A scatter plot will then be displayed containing the position predicted by the neural network for each point in time.
 
+After closing the scatter plot that contains the predicted position values, a new scatter plot will be generated that displays the actual position values over the specified time interval.
 ## Technologies Used
 
 - Python
 - PyTorch
 - Matplotlib
+- SymPy
 - Automatic Differentiation
 - Multilayer Perceptron Neural Network
 
