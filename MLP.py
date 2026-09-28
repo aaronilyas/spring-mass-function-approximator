@@ -73,8 +73,8 @@ class MLP(nn.Module):
         spring_constant: float,
         mass: float,
         damping_coefficient: float,
-        actual_inital_condition_position: torch.Tensor,
-        actual_inital_condition_velocity: torch.Tensor,
+        actual_initial_condition_position: torch.Tensor,
+        actual_initial_condition_velocity: torch.Tensor,
     ) -> None:
         """
         This method trains the neural network by defining a loss function,
@@ -109,13 +109,13 @@ class MLP(nn.Module):
 
             # This measures how far our networks predicted initial position is from our actual initial position.
             residual_initial_position = (
-                predicted_initial_position - actual_inital_condition_position
+                predicted_initial_position - actual_initial_condition_position
             )
 
             inital_velocity = self.derivative(t_0, predicted_initial_position)
 
             # This measures how far our networks predicted initial velocity is from our actual initial position.
-            residual_velocity = inital_velocity - actual_inital_condition_velocity
+            residual_velocity = inital_velocity - actual_initial_condition_velocity
 
             # We are defining our loss function to be the sum of the average error for each of our residuals squared.
             loss = (
