@@ -1,5 +1,5 @@
-from sympy import plot
-
+from sympy import plot, symbols
+import numpy as np
 from MLP import MLP
 import torch
 import matplotlib.pyplot as plt
@@ -47,10 +47,25 @@ def main():
     values = list(position_at_various_time_values.values())
 
     plt.scatter(keys, values)
+    plt.xlabel("time")
+    plt.ylabel("position")
     plt.show()
+   
+    list_of_values_at_times = []
+    list_of_times = []
+    t = symbols('t')
+    for i in range(int(starting_time),int(ending_time)):
+        position_at_time = symbolic_solution.rhs.subs(t,i)
+        list_of_values_at_times.append(position_at_time)
+        list_of_times.append(i)
 
-    #plot(symbolic_solution, starting_time, ending_time)
-    print(symbolic_solution)
+    list_of_values_at_times = np.array(list_of_values_at_times)
+    list_of_times = np.array(list_of_times)
+     
+    plt.scatter(list_of_times,list_of_values_at_times)
+    plt.xlabel("time")
+    plt.ylabel("position")
+    plt.show()
 
 
 
